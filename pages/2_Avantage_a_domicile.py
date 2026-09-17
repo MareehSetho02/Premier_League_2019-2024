@@ -105,7 +105,7 @@ col1, col2, col3 = st.columns(3)
 col1.metric("Victoires à domicile", f"{victoires_dom:.1f} %" if victoires_dom is not None else "—", delta=delta_victoires(victoires_dom, ref_dom))
 col2.metric("Victoires à l'extérieur", f"{victoires_ext:.1f} %" if victoires_ext is not None else "—", delta=delta_victoires(victoires_ext, ref_ext))
 col3.metric("Écart domicile / extérieur", f"{ecart_dom_ext:+.1f} pts" if ecart_dom_ext is not None else "—")
-st.caption("Les taux portent sur les matchs joués par les équipes sélectionnées à chaque lieu. Les matchs nuls restent dans le dénominateur. Une association ne démontre pas une causalité.")
+st.caption(f"{len(df_filtre)} matchs sélectionnés.")
 
 tab2, tab3 = st.tabs(["📈 Évolution par saison", "🏠 Domicile vs extérieur"])
 

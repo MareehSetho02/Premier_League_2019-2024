@@ -46,7 +46,6 @@ if not equipes_selectionnees:
     matchs["Buts"] = matchs["FTHG"] + matchs["FTAG"]
     matchs["Tirs"] = matchs["HS"] + matchs["AS"]
     matchs["Tirs cadrés"] = matchs["HST"] + matchs["AST"]
-    st.caption("Un point représente un match, avec les buts et les tirs des deux équipes additionnés.")
 else:
     # Une ligne par équipe sélectionnée et par match : chaque équipe garde ses statistiques.
     domicile = matchs[matchs["HomeTeam"].isin(equipes_selectionnees)].copy()
@@ -60,7 +59,6 @@ else:
     exterieur["Tirs"] = exterieur["AS"]
     exterieur["Tirs cadrés"] = exterieur["AST"]
     matchs = pd.concat([domicile, exterieur], ignore_index=True)
-    st.caption("Un point représente une équipe dans un match, avec uniquement ses buts et ses tirs. Une rencontre entre deux équipes sélectionnées produit deux points. Les moyennes sont pondérées par les matchs disputés.")
 
 if matchs.empty:
     st.info("Aucun match pour les équipes et saisons sélectionnées.")

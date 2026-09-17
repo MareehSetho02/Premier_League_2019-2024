@@ -79,7 +79,7 @@ c3.metric(
     delta_color="inverse",
 )
 
-st.caption(f"{len(stats)} observations équipe-match, domicile et extérieur réunis. Le ratio est descriptif, pas une probabilité de sanction : certains cartons ne correspondent pas à une faute comptabilisée.")
+st.caption(f"{len(stats)} observations équipe-match sélectionnées.")
 
 # Moyennes et ratio par équipe du fichier reçu ; aucune limitation aux 12 premières.
 agg = stats.groupby("Team").agg(
