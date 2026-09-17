@@ -80,11 +80,31 @@ st.sidebar.download_button(
 victoires_dom, victoires_ext = calculer_taux(df_filtre, equipes)
 ecart_dom_ext = victoires_dom - victoires_ext if victoires_dom is not None and victoires_ext is not None else None
 
+# La référence ne subit jamais le filtre équipe.
+reference = df_saisons if equipes else df
+ref_dom, ref_ext = calculer_taux(reference, [])
+if equipes:
+    clubs_reference = set(reference["HomeTeam"]) | set(reference["AwayTeam"])
+    afficher_deltas = not clubs_reference.issubset(set(equipes))
+    libelle_reference = "vs championnat sur les saisons sélectionnées" if saisons else "vs championnat sur toutes les saisons"
+else:
+    afficher_deltas = bool(saisons) and set(saisons) != set(saisons_disponibles)
+    libelle_reference = "vs moyenne de toutes les saisons"
+
+
+def delta_victoires(taux, taux_reference):
+    if not afficher_deltas or taux is None or taux_reference is None:
+        return None
+    ecart = round(taux - taux_reference, 1)
+    if ecart == 0:
+        return None
+    return f"{ecart:+.1f} pts {libelle_reference}"
+
+
 col1, col2, col3 = st.columns(3)
-col1.metric("Victoires à domicile", f"{victoires_dom:.1f} %" if victoires_dom is not None else "—")
-col2.metric("Victoires à l'extérieur", f"{victoires_ext:.1f} %" if victoires_ext is not None else "—")
+col1.metric("Victoires à domicile", f"{victoires_dom:.1f} %" if victoires_dom is not None else "—", delta=delta_victoires(victoires_dom, ref_dom))
+col2.metric("Victoires à l'extérieur", f"{victoires_ext:.1f} %" if victoires_ext is not None else "—", delta=delta_victoires(victoires_ext, ref_ext))
 col3.metric("Écart domicile / extérieur", f"{ecart_dom_ext:+.1f} pts" if ecart_dom_ext is not None else "—")
-st.info(message_ecart(victoires_dom, victoires_ext))
 st.caption("Les taux portent sur les matchs joués par les équipes sélectionnées à chaque lieu. Les matchs nuls restent dans le dénominateur. Une association ne démontre pas une causalité.")
 
 tab2, tab3 = st.tabs(["📈 Évolution par saison", "🏠 Domicile vs extérieur"])
@@ -97,15 +117,6 @@ with tab2:
         taux_dom, taux_ext = calculer_taux(matchs_saison, equipes)
         lignes.append({"Saison": saison, "Domicile": taux_dom, "Extérieur": taux_ext})
     evolution = pd.DataFrame(lignes)
-    valides = evolution.dropna(subset=["Domicile"])
-    if not valides.empty:
-        maximum = valides["Domicile"].max()
-        meilleures = valides.loc[valides["Domicile"] == maximum, "Saison"].tolist()
-        if len(valides) == 1:
-            seule = valides.iloc[0]
-            st.info(f"Saison {seule['Saison']} : {seule['Domicile']:.1f} % de victoires à domicile sur la sélection. Sélectionnez plusieurs saisons pour observer une évolution.")
-        else:
-            st.info(f"Sur la sélection, le taux de victoire à domicile le plus élevé est de {maximum:.1f} %, observé en {', '.join(meilleures)}.")
     df_graph = evolution.melt(id_vars="Saison", var_name="Lieu", value_name="Taux de victoire")
     fig = px.line(
         df_graph, x="Saison", y="Taux de victoire", color="Lieu", markers=True,

@@ -79,12 +79,6 @@ c3.metric(
     delta_color="inverse",
 )
 
-if afficher_deltas:
-    sens_fautes = "davantage de" if kpi_fouls > ref_fouls else "moins de" if kpi_fouls < ref_fouls else "autant de"
-    sens_cartons = "davantage de" if kpi_yellow > ref_yellow else "moins de" if kpi_yellow < ref_yellow else "autant de"
-    st.info(f"Sur la sélection : {sens_fautes} fautes et {sens_cartons} cartons jaunes par match que la référence ({libelle_reference.removeprefix('vs ')}).")
-else:
-    st.info(f"Sur la sélection, une équipe commet en moyenne {nombre(kpi_fouls)} fautes et reçoit {nombre(kpi_yellow)} cartons jaunes par match.")
 st.caption(f"{len(stats)} observations équipe-match, domicile et extérieur réunis. Le ratio est descriptif, pas une probabilité de sanction : certains cartons ne correspondent pas à une faute comptabilisée.")
 
 # Moyennes et ratio par équipe du fichier reçu ; aucune limitation aux 12 premières.
